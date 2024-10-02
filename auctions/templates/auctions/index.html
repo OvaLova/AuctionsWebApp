@@ -1,7 +1,40 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-    <h2>Active Listings</h2>
+    <h2 style="margin-top: 2rem; margin-bottom: 4rem;">Active Listings</h2>
 
-    TODO
-{% endblock %}
+    {% for listing in listings %}
+        <div class="listing">
+            <div class="listing_info">
+                <a href="{% url 'listing' listing=listing.item %}" style="font-weight: bold">
+                    {{listing.item}}
+                </a>
+                {% if listing.current_bid %}
+                    <p>{{listing.bid.current_bid}} {{listing.bid.currency}}</p>
+                {% else %}
+                    <p>
+                        <span style="font-weight: bold">Price: </span>
+                        {{listing.bid.start_bid}} {{listing.bid.currency}}
+                    </p>
+                {% endif %}
+                <p class="informative">
+                    Created: 
+                    <br>
+                    {{listing.post_date}}; {{listing.post_time}}
+                </p>
+            </div>
+            {% if listing.photo %}
+                <a href="{% url 'listing' listing=listing.item %}">
+                    <img class="img_listings" src="{{listing.photo.url}}" alt="{{listing.item}}">
+                </a>
+            {% endif %}
+            <div class="listing_info" style="flex-shrink: 1; align-self: flex-start; margin-top: 0;">
+                <label style="font-weight: bold; color: grey;">Description:</label>
+                <br>
+                <p class="description">&emsp;&emsp;{{listing.description}}</p>
+            </div>
+        </div>
+    {% empty %}
+        <p>No active listings</p>
+    {% endfor %}
+{% endblock %} 

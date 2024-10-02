@@ -1,0 +1,60 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <div class="central_piece">
+        <h2>
+            Listing: {{listing.item}}
+        </h2>
+        <p style="color: grey; font-size: 0.8em">
+            Created: {{listing.post_date}}, {{listing.post_time}}
+        </p>
+    </div>
+    <div style="margin: 4%;">
+        <p>&emsp;&emsp;{{listing.description}}</p>
+    </div>
+    <div class="central_piece">
+        {% if listing.photo %}
+            <img class="img_page" src="{{listing.photo.url}}" alt="{{listing.item}}">
+        {% endif %}
+        <div class="pieces">
+            <p>
+                <span style="font-weight: bold">Category: </span>
+                {{listing.category}}
+            </p>
+            <p>
+                <span style="font-weight: bold">Sold by: </span>
+                {{listing.owner.first_name}} {{listing.owner.last_name}}
+            </p>
+            <p>
+                <span style="font-weight: bold">Contact: </span>
+                {{listing.owner.email}}
+            </p>
+            {% if listing.current_bid %}
+                <p>
+                    <span style="font-weight: bold">Price: </span>
+                    {{listing.bid.current_bid}} {{listing.bid.currency}}
+                </p>
+            {% else %}
+                <p style="font-size: x-large;">
+                    <span style="font-weight: bold">Price: </span>
+                    {{listing.bid.start_bid}} {{listing.bid.currency}}
+                </p>
+            {% endif %}
+        </div>
+    </div>
+        <div class="comments">
+            <h4 style="font-weight: bold; margin-bottom: 2rem;">Comments:</h4>
+            {% for comment in comments %}
+                <div class="comment">
+                    <p>{{comment.comment}}</p>
+                    <br>
+                    <div class="informative">
+                        <p style="text-align: right;">Posed by: {{comment.author}}</p>
+                        <p style="text-align: right;">From: {{comment.post_date}}; {{comment.post_time}}</p>
+                    </div>
+                </div>
+            {% empty %}
+                <p>No comments yet</p>
+        </div>
+        {% endfor %}
+{% endblock %} 

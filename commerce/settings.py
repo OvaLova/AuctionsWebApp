@@ -124,3 +124,7 @@ STATIC_URL = '/static/'
 
 # Set the default auto field type for primary keys
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR + '/' + 'media'
