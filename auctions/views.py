@@ -4,7 +4,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
-from .models import User, Listing, Comment
+from .models import User, Listing, Comment, Bid
 
 
 def index(request):
@@ -25,7 +25,7 @@ def login_view(request):
         # Check if authentication successful
         if user is not None:
             login(request, user)
-            return HttpResponseRedirect(reverse("index"))
+            return HttpResponseRedirect(reverse("auction:index"))
         else:
             return render(request, "auctions/login.html", {
                 "message": "Invalid username and/or password."
@@ -36,7 +36,7 @@ def login_view(request):
 
 def logout_view(request):
     logout(request)
-    return HttpResponseRedirect(reverse("index"))
+    return HttpResponseRedirect(reverse("auction:index"))
 
 
 def register(request):
@@ -61,7 +61,7 @@ def register(request):
                 "message": "Username already taken."
             })
         login(request, user)
-        return HttpResponseRedirect(reverse("index"))
+        return HttpResponseRedirect(reverse("auction:index"))
     else:
         return render(request, "auctions/register.html")
     
@@ -73,3 +73,39 @@ def listing_view(request, listing):
         "listing": listing,
         "comments": comments
     })
+
+
+def add_comment(request, listing):
+    if request.user.is_authenticated:
+        listing = Listing.objects.get(item=listing)
+        if request.method == "POST":
+            comment = request.POST.get("comment")
+            author = request.user
+            Comment(comment=comment, author=author, listing=listing).save()
+            return HttpResponseRedirect(reverse("auction:listing", kwargs={"listing": listing.item}))
+        else:
+            comments = list(Comment.objects.filter(listing=listing))
+            return render(request, "auctions/comment.html", {
+                "listing": listing,
+                "comments": comments
+        })
+    else:
+        return HttpResponseRedirect(reverse("auction:login"))
+
+
+def add_listing(request):
+    categories = Listing.CATEGORIES
+    return render(request, "auctions/add.html", {
+        "categories": categories,
+    })
+
+
+def bid_raise(request, listing):
+    listing = Listing.objects.get(item=listing)
+    bid = Bid.objects.get(listing=listing)
+    new_bid = request.POST.get("new_bid")
+    bid.current_bid = new_bid
+    bid.save()
+    return HttpResponseRedirect(reverse("auction:listing", kwargs={"listing": listing.item}))
+    
+

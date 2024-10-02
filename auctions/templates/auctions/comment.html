@@ -1,0 +1,16 @@
+{% extends "auctions/listing.html" %}
+
+{% block comment %}
+    <div style="align-self: center;" class="central_piece">
+        <h4 style="font-weight: bold; align-self: flex-start;">Add comment:</h4>
+        <form method="POST" action="{% url 'auction:add_comment' listing=listing.item %}">
+            {% csrf_token %}
+            <textarea class="comments comment" name="comment" placeholder="Enter your comment here..." style="width: 50vw; height: 25vh; min-height: 6em;"></textarea>
+            <div>
+                <button class="add_button" type="submit">Post comment</comment>
+            </div>
+        </form>
+    </div>
+{% endblock %}
+
+{% block comments%}{% endblock %}

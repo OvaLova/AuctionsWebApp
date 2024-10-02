@@ -29,32 +29,49 @@
                 <span style="font-weight: bold">Contact: </span>
                 {{listing.owner.email}}
             </p>
-            {% if listing.current_bid %}
-                <p>
-                    <span style="font-weight: bold">Price: </span>
+            {% if listing.bid.current_bid %}
+                <p class="price">
+                    <span style="font-weight: bold;">Price: </span>
                     {{listing.bid.current_bid}} {{listing.bid.currency}}
                 </p>
             {% else %}
-                <p style="font-size: x-large;">
+                <p class="price">
                     <span style="font-weight: bold">Price: </span>
                     {{listing.bid.start_bid}} {{listing.bid.currency}}
                 </p>
             {% endif %}
+            <div style="margin-top:1rem">
+                <form action="{% url 'auction:bid_raise' listing=listing.item %}" method="post">
+                    {% csrf_token %}
+                    <label for="raise">Your bid:</label>
+                    <input style="background-color: grey; margin-left: 1rem" class="add_button no-hover_add_button" id="raise" type="number" name="new_bid">
+                    <button class="add_button" type="submit">Raise</button>
+                </form>
+            </div>
         </div>
     </div>
         <div class="comments">
-            <h4 style="font-weight: bold; margin-bottom: 2rem;">Comments:</h4>
-            {% for comment in comments %}
-                <div class="comment">
-                    <p>{{comment.comment}}</p>
-                    <br>
-                    <div class="informative">
-                        <p style="text-align: right;">Posed by: {{comment.author}}</p>
-                        <p style="text-align: right;">From: {{comment.post_date}}; {{comment.post_time}}</p>
-                    </div>
+            {% block comment%}
+                <div>
+                    <h4 style="font-weight: bold;">Comments:</h4>
+                    <form action="{% url 'auction:add_comment' listing=listing.item %}" method="get">
+                        <button class="add_button" type="submit">Add comment</button>
+                    </form>
                 </div>
-            {% empty %}
-                <p>No comments yet</p>
+            {% endblock %}
+            {% block comments%}
+                {% for comment in comments %}
+                    <div class="comment">
+                        <p>{{comment.comment}}</p>
+                        <br>
+                        <div class="informative">
+                            <p style="text-align: right;">Posed by: {{comment.author}}</p>
+                            <p style="text-align: right;">From: {{comment.post_date}}; {{comment.post_time}}</p>
+                        </div>
+                    </div>
+                {% empty %}
+                    <p>No comments yet</p>
+                {% endfor %}
+            {% endblock %}
         </div>
-        {% endfor %}
 {% endblock %} 

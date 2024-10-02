@@ -78,9 +78,40 @@ p {
     font-size: 0.8em;
 }
 
+.add_button {
+    background-color: #3579F6;
+    color: white;
+    border-radius: 1rem;
+    border: none;
+    padding-top: .4rem;
+    padding-bottom: .4rem;
+    padding-left: .6rem;
+    padding-right: .6rem;
+    margin-bottom: 1rem;
+}
+
+.add_button:hover {
+    box-shadow: .2rem .2rem .1rem grey;
+}
+
+.no-hover_add_button:hover {
+    box-shadow: none
+}
+
+.price {
+    text-decoration: underline;
+    font-size: x-large;
+}
+
 @media (prefers-color-scheme:dark) {
     body {
         color: white;
         background: #1E1E1E;
+    }
+    .add_button:hover {
+        box-shadow: .2rem .2rem .1rem lightgrey;
+    }
+    .no-hover_add_button:hover {
+        box-shadow: none
     }
 }
