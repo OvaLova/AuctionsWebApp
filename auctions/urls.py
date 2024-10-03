@@ -8,11 +8,12 @@ from . import views
 app_name = "auction"
 urlpatterns = [
     path("", views.index, name="index"),
-    path("/<str:listing>", views.listing_view, name="listing"),
+    path("<str:listing>/listing", views.listing_view, name="listing"),
     path("login", views.login_view, name="login"),
     path("logout", views.logout_view, name="logout"),
     path("register", views.register, name="register"),
-    path("/<str:listing>/comment", views.add_comment, name="add_comment"),
+    path("<str:listing>/comment", views.add_comment, name="add_comment"),
     path("add", views.add_listing, name="add_listing"),
-    path("/<str:listing>/raise", views.bid_raise, name="bid_raise"),
+    path("<str:listing>/raise", views.bid_raise, name="bid_raise"),
+    path("watchlist", views.watchlist_view, name="watchlist")
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

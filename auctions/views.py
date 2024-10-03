@@ -3,6 +3,8 @@ from django.db import IntegrityError
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import redirect
 
 from .models import User, Listing, Comment, Bid
 
@@ -25,7 +27,8 @@ def login_view(request):
         # Check if authentication successful
         if user is not None:
             login(request, user)
-            return HttpResponseRedirect(reverse("auction:index"))
+            next_url = request.GET.get("next", "/")
+            return redirect(next_url)
         else:
             return render(request, "auctions/login.html", {
                 "message": "Invalid username and/or password."
@@ -75,6 +78,7 @@ def listing_view(request, listing):
     })
 
 
+@login_required
 def add_comment(request, listing):
     if request.user.is_authenticated:
         listing = Listing.objects.get(item=listing)
@@ -93,6 +97,7 @@ def add_comment(request, listing):
         return HttpResponseRedirect(reverse("auction:login"))
 
 
+@login_required
 def add_listing(request):
     categories = Listing.CATEGORIES
     return render(request, "auctions/add.html", {
@@ -100,6 +105,7 @@ def add_listing(request):
     })
 
 
+@login_required
 def bid_raise(request, listing):
     listing = Listing.objects.get(item=listing)
     bid = Bid.objects.get(listing=listing)
@@ -107,5 +113,20 @@ def bid_raise(request, listing):
     bid.current_bid = new_bid
     bid.save()
     return HttpResponseRedirect(reverse("auction:listing", kwargs={"listing": listing.item}))
+
+
+@login_required
+def watchlist_view(request):
+    requester = request.user
+    listings = Listing.objects.filter(active_flag=True)
+    watchlist = []
+    for listing in listings:
+        if requester in listing.watchers.all():
+            watchlist.append(listing)
+        else:
+            pass
+    return render(request, "auctions/index.html", {
+        "listings": watchlist
+    })
     
 
