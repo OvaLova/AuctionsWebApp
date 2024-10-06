@@ -5,7 +5,7 @@
         <h4 style="font-weight: bold; align-self: flex-start;">Add comment:</h4>
         <form method="POST" action="{% url 'auction:add_comment' listing=listing.item %}">
             {% csrf_token %}
-            <textarea class="comments comment" name="comment" placeholder="Enter your comment here..." style="width: 50vw; height: 25vh; min-height: 6em;"></textarea>
+            <textarea class="comments comment" name="comment" placeholder="Enter your comment here..." style="width: 50vw; height: 25vh; min-height: 6em; margin-bottom: 1rem;"></textarea>
             <div>
                 <button class="add_button" type="submit">Post comment</comment>
             </div>

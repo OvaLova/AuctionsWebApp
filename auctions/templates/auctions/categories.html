@@ -1,0 +1,12 @@
+{% extends 'auctions/layout.html' %}
+
+{% block body %}
+    <h2 style="margin-top: 2rem; margin-bottom: 2rem;">
+        Categories
+    </h2>
+    <div style="display: flex; flex-direction: column; font-size:large; padding-bottom: 4rem;">
+        {% for category in categories %}
+            <a style="width: fit-content;" href="{% url 'auction:category' category=category %}">{{category}}</a>
+        {% endfor %}
+    </div>
+{% endblock %} 

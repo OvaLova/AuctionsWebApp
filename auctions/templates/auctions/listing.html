@@ -2,9 +2,27 @@
 
 {% block body %}
     <div class="central_piece">
-        <h2>
-            Listing: {{listing.item}}
-        </h2>
+        <div style="display: flex;">
+            <h2>
+                Listing: 
+                <span style="font-weight: bolder;">
+                    {{listing.item}}
+                </span>
+            </h2>
+            <div style="font-size: large; margin-left: 1rem">
+                <form action="{% url 'auction:watchlist' %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="listing_id" value="{{listing.id}}">
+                    <button class="add_button" style="margin-bottom: 0" type="submit">
+                        {% if watch_flag is True %}
+                            Remove from watchlist
+                        {% else %}
+                            Add to watchlist
+                        {% endif %}
+                    </button>
+                </form>
+            </div>
+        </div>
         <p style="color: grey; font-size: 0.8em">
             Created: {{listing.post_date}}, {{listing.post_time}}
         </p>
@@ -21,33 +39,69 @@
                 <span style="font-weight: bold">Category: </span>
                 {{listing.category}}
             </p>
+            {% if listing.owner != request.user %}
             <p>
                 <span style="font-weight: bold">Sold by: </span>
                 {{listing.owner.first_name}} {{listing.owner.last_name}}
             </p>
+            {% else %}
+            <p>
+                <span style="font-weight: bold">Sold by: </span>
+                <span style="font-weight: bold; color: #3579F6">YOURSELF</span>
+            </p>
+            {% endif %}
             <p>
                 <span style="font-weight: bold">Contact: </span>
                 {{listing.owner.email}}
             </p>
-            {% if listing.bid.current_bid %}
-                <p class="price">
-                    <span style="font-weight: bold;">Price: </span>
+            <p class="price">
+                <span style="font-weight: bold;">Price: </span>
+                {% if listing.bid.current_bid %}
                     {{listing.bid.current_bid}} {{listing.bid.currency}}
-                </p>
-            {% else %}
-                <p class="price">
-                    <span style="font-weight: bold">Price: </span>
+                {% else %}
                     {{listing.bid.start_bid}} {{listing.bid.currency}}
+                {% endif %}
+            </p>
+            {% if listing.closed_flag is False %}
+                {% if listing.owner != request.user %}
+                    <div style="margin-top:1rem">
+                        <form action="{% url 'auction:bid_raise' listing=listing.item %}" method="post">
+                            {% csrf_token %}
+                            <label for="raise">Your bid:</label>
+                            <input style="background-color: grey; margin-left: 1rem" class="add_button no-hover_add_button" id="raise" type="number" name="new_bid">
+                            <button class="add_button" type="submit">Raise</button>
+                        </form>
+                    </div>
+                    {% if warning %}
+                    <p style="color: red;">
+                        {{warning}}
+                    </p>
+                    {% endif %}
+                {% else %}
+                <div style="margin-top:1rem; align-self: center;">
+                    <form action="{% url 'auction:close' listing=listing.item %}" method="get">
+                        {% csrf_token %}
+                        <button class="add_button" type="submit">Close auction</button>
+                    </form>
+                </div>
+                <div style="align-self: center;">
+                    <form action="{% url 'auction:edit' listing=listing.item %}" method="get">
+                        {% csrf_token %}
+                        <button class="add_button" type="submit">Edit listing</button>
+                    </form>
+                </div>
+                {% endif %}
+            {% else %}
+                <br>
+                <p style="font-weight: bold; color: red; font-size: x-large">
+                    AUCTION CLOSED.
                 </p>
+                {% if listing.bid.owner == request.user %}
+                <p style="font-weight: bold; color: #3579F6; font-size: xx-large">
+                    YOU ARE THE WINNER!
+                </p>
+                {% endif %}
             {% endif %}
-            <div style="margin-top:1rem">
-                <form action="{% url 'auction:bid_raise' listing=listing.item %}" method="post">
-                    {% csrf_token %}
-                    <label for="raise">Your bid:</label>
-                    <input style="background-color: grey; margin-left: 1rem" class="add_button no-hover_add_button" id="raise" type="number" name="new_bid">
-                    <button class="add_button" type="submit">Raise</button>
-                </form>
-            </div>
         </div>
     </div>
         <div class="comments">
@@ -63,9 +117,8 @@
                 {% for comment in comments %}
                     <div class="comment">
                         <p>{{comment.comment}}</p>
-                        <br>
                         <div class="informative">
-                            <p style="text-align: right;">Posed by: {{comment.author}}</p>
+                            <p style="text-align: right;">Posted by: {{comment.author}}</p>
                             <p style="text-align: right;">From: {{comment.post_date}}; {{comment.post_time}}</p>
                         </div>
                     </div>

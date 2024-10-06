@@ -15,6 +15,8 @@ p {
     margin-top: 2rem;
     display: flex;
     align-items: center;
+    justify-content: space-evenly;
+    flex-wrap: nowrap;
 }
 
 .listing_info {
@@ -26,12 +28,13 @@ p {
 }
 
 .img_listings {
-    width: 300px; 
+    max-width: 300px; 
     display: inline-block;
+    margin-bottom: 2rem;
 }
 
 .img_page {
-    width: 500px; 
+    max-width: 400px; 
     display: inline-block;
 }
 
@@ -41,6 +44,13 @@ p {
     padding: 2rem;
     border: solid grey;
     border-radius: 3em;
+    min-width: 40vw
+}
+
+@media (max-width: 800px) {
+    .listing {
+        flex-wrap: wrap;
+    }
 }
 
 .central_piece {
@@ -56,7 +66,7 @@ p {
     font-size: larger;
 }
 
-.central_piece .pieces > p {
+.central_piece .pieces > p, form {
     text-align: center;
 }
 
@@ -69,13 +79,14 @@ p {
 .comments .comment {
     border: solid lightgrey;
     border-radius: 3rem;
-    padding: 2rem;
-    margin: 1rem;
+    padding: 1.2rem;
+    margin-top: 1rem;
 }
 
 .informative {
     color: grey; 
     font-size: 0.8em;
+    margin-top: 0.5rem;
 }
 
 .add_button {
@@ -102,6 +113,57 @@ p {
     text-decoration: underline;
     font-size: x-large;
 }
+
+.add_list {
+    display: flex; 
+    flex-direction: column;
+}
+
+.form-group {
+    display: flex;
+    align-items: center;
+    margin: 1rem;
+}
+
+.form-group label{
+    width: 150px;
+    font-weight: bold;
+    margin: 1rem;
+}
+
+.form-group input, textarea, select {
+    border: solid lightgrey;
+    border-radius: 3rem;
+    margin: 1rem;
+}  
+
+.form-group input {
+    flex-grow: 0.2;
+    padding: .5rem;
+}
+
+.form-group textarea {
+    padding: 2rem;
+    flex-grow: 0.5;
+}   
+
+.form-group select {
+    padding: 2rem;
+    flex-grow: .08;
+}
+
+.check-wrap {
+    width: 1.5*30px;
+    height: 1.5*30px;
+    margin: 1rem;
+}
+
+.check-wrap .check {
+    width: 30px;
+    height: 30px;
+    transform: scale(1.5);
+}
+
 
 @media (prefers-color-scheme:dark) {
     body {

@@ -20,14 +20,23 @@
                 </div>
             </div>
             <div style="align-self: center; display: felx; flex-direction: column; font-size: large; font-weight: bold; text-align: center;">
-                <p style="font-size: larger; text-decoration: underline; flex-grow: 1;">Menu</p>
+                <p style="font-size: larger; text-decoration: underline; flex-grow: 1; margin-bottom: 1rem">Menu</p>
                 <ul class="nav">
                     <li class="nav-item" style="flex-grow: 1">
-                        <a class="nav-link" href="{% url 'auction:index' %}">Active Listings</a>
+                        <a class="nav-link" href="{% url 'auction:index' %}">All listings</a>
+                    </li>
+                    <li class="nav-item" style="flex-grow: 1">
+                        <a class="nav-link" href="{% url 'auction:categories' %}">By category</a>
                     </li>
                     {% if user.is_authenticated %}
                     <li class="nav-item" style="flex-grow: 1">
+                        <a class="nav-link" href="{% url 'auction:own' %}">My Listings</a>
+                    </li>
+                    <li class="nav-item" style="flex-grow: 1">
                         <a class="nav-link" href="{% url 'auction:add_listing' %}">Add Listing</a>
+                    </li>
+                    <li class="nav-item" style="flex-grow: 1">
+                        <a class="nav-link" href="{% url 'auction:watchlist' %}">Watchlist</a>
                     </li>
                     {% else %}
                     
@@ -42,7 +51,7 @@
                         </li>
                     {% else %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'auction:login' %}">Log In</a>
+                            <a class="nav-link" href="{% url 'auction:login' %}?next={{request.path}}">Log In</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'auction:register' %}">Register</a>
@@ -51,8 +60,9 @@
                 </ul>
             </div>
         </header>
+        <br>
         <hr>
-        <main>
+        <main style="margin-top: 8rem;">
             {% block body %}
             {% endblock %}
         </main>

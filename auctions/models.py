@@ -2,6 +2,8 @@ from django.contrib.auth.models import AbstractUser
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.urls import reverse
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 
 class User(AbstractUser):
@@ -15,11 +17,12 @@ class Listing(models.Model):
     def get_category(categories=CATEGORIES):
         return {i: i for i in categories}
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name="own_listings")
-    item = models.CharField(max_length=40)
+    item = models.CharField(max_length=40, unique=True)
     description = models.TextField(max_length=2000)
     photo = models.ImageField(blank=True)
     category = models.CharField(max_length=20, blank=True, choices=get_category, default='Other')
     active_flag = models.BooleanField(default=False)
+    closed_flag = models.BooleanField(default=False)
     post_date = models.DateField(auto_now_add=True)
     post_time = models.TimeField(auto_now_add=True)
     def __str__(self):
@@ -38,7 +41,7 @@ class Bid(models.Model):
         return {i: i for i in currencies}
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name="own_bids")
     start_bid = models.IntegerField(validators=[MinValueValidator(10)], default=10)
-    current_bid = models.IntegerField(null=True, blank=True)
+    current_bid = models.IntegerField(validators=[MinValueValidator(0)], null=True, blank=True)
     currency = models.CharField(max_length=3, choices=get_currencies, default='RON')
     listing = models.OneToOneField(Listing, on_delete=models.CASCADE, related_name="bid", null=True)
     def __str__(self):
@@ -61,3 +64,8 @@ class Comment(models.Model):
     def __str__(self):
         return f'{self.author} -> {self.listing.item}'
 
+
+@receiver(post_save, sender=Listing)
+def create_bid(sender, instance, created, **kwargs):
+    if created:
+        Bid.objects.create(listing=instance, owner=instance.owner)
