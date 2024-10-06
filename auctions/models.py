@@ -1,13 +1,16 @@
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MinValueValidator
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.urls import reverse
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 
 
 class User(AbstractUser):
     watchlist = models.ManyToManyField("Listing", blank=True, related_name="watchers")
+    first_name = models.CharField(max_length=50, blank=False, null=False)
+    last_name = models.CharField(max_length=50, blank=False, null=False)
 
 
 class Listing(models.Model):
@@ -69,3 +72,9 @@ class Comment(models.Model):
 def create_bid(sender, instance, created, **kwargs):
     if created:
         Bid.objects.create(listing=instance, owner=instance.owner)
+
+
+@receiver(pre_save, sender=User)
+def validate_user(sender, instance, **kwargs):
+    if not instance.first_name or not instance.last_name:
+        raise ValidationError("First name and last name are required fields.")
